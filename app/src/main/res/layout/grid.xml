@@ -21,10 +21,17 @@
             android:src="@drawable/marker_00"
             android:layout_weight="1" />
 
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/coord_textview"
+            android:layout_weight="1"
+            android:padding="16dp" />
+
         <Space
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2" />
+            android:layout_weight="1" />
 
         <ImageView
             android:layout_width="0dp"
@@ -68,6 +75,12 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"></LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"></LinearLayout>
 

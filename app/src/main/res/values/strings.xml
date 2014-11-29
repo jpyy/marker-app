@@ -3,5 +3,7 @@
 
     <string name="app_name">Marker Application</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="pref_zeromq_url">Server URL</string>
 
 </resources>
