@@ -24,6 +24,7 @@ class AndroidPlugin(Plugin):
         self.window_should_close = False
         self._window = None
         self.fullscreen = c_bool(0)
+        self.realdata = c_bool(False)
         self.x = c_float(0)
         self.y = c_float(0)
 
@@ -32,6 +33,7 @@ class AndroidPlugin(Plugin):
         self._bar = atb.Bar(name =self.__class__.__name__, label=atb_label,
             help="ref detection parameters", color=(50, 50, 50), alpha=100,
             text='light', position=atb_pos,refresh=.3, size=(300, 100))
+        self._bar.add_var("Real data", self.realdata)
         self._bar.add_var("X", self.x)
         self._bar.define("min=0 max=1 step=0.01", "X")
         self._bar.add_var("Y", self.y)
@@ -47,11 +49,23 @@ class AndroidPlugin(Plugin):
 
 
     def update(self,frame,recent_pupil_positions,events):
+        x = None
+        y = None
+        if self.realdata.value:
+            for p in recent_pupil_positions:
+                if "realtime gaze on phone" in p:
+                    x, y = p["realtime gaze on phone"]
+                    y = 1 - y
+        else:
+            x = self.x.value
+            y = self.y.value
+        
+        if x != None and y != None:
+            events.append({'type': 'android_coordinates', 
+                           'x': x,
+                           'y': y,
+                           'timestamp' : frame.timestamp})
 
-        events.append({'type': 'android_coordinates', 
-                       'x': self.x.value,
-                       'y': self.y.value,
-                       'timestamp' : frame.timestamp})
 
     def gl_display(self):
         """

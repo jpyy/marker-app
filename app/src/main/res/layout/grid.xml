@@ -19,7 +19,9 @@
             android:layout_height="match_parent"
             android:id="@+id/imageView"
             android:src="@drawable/marker_00"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:paddingTop="10dp"
+            android:paddingLeft="10dp" />
 
         <TextView
             android:layout_width="0dp"
@@ -38,7 +40,9 @@
             android:layout_height="match_parent"
             android:id="@+id/imageView2"
             android:src="@drawable/marker_01"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -96,7 +100,9 @@
             android:id="@+id/imageView3"
             android:src="@drawable/marker_02"
             android:layout_gravity="bottom"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:paddingLeft="10dp"
+            android:paddingBottom="10dp" />
 
         <Space
             android:layout_width="0dp"
@@ -109,7 +115,9 @@
             android:id="@+id/imageView4"
             android:src="@drawable/marker_03"
             android:layout_gravity="bottom"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:paddingRight="10dp"
+            android:paddingBottom="10dp" />
     </LinearLayout>
 
 </LinearLayout>
