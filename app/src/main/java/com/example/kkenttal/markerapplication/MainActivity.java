@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.PointF;
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -19,8 +20,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.HashMap;
 
 
 public class MainActivity extends Activity {
@@ -33,6 +37,34 @@ public class MainActivity extends Activity {
     TextView mCoordView;
     View mCrosshairView;
     private WindowManager mWm;
+
+    private static final int[] BUTTON_RESOURCES = {R.id.button1, R.id.button2};
+    private HashMap<RectF, Button> mButtons;
+
+    private void updateButtonRects() {
+        DisplayMetrics dm = new DisplayMetrics();
+        mWm.getDefaultDisplay().getMetrics(dm);
+        int screenWidth = dm.widthPixels;
+        int screenHeight = dm.heightPixels;
+
+        mButtons = new HashMap<RectF, Button>();
+        for (int res : BUTTON_RESOURCES) {
+            Button b = (Button) findViewById(res);
+            b.setFocusableInTouchMode(true);
+            int[] position = new int[2];
+            b.getLocationOnScreen(position);
+            int width = b.getWidth();
+            int height = b.getHeight();
+
+            RectF screenRect = new RectF(
+                    (float)position[0] / screenWidth,
+                    (float)position[1] / screenHeight,
+                    ((float)position[0] + width) / screenWidth,
+                    ((float)position[1] + height) / screenHeight
+            );
+            mButtons.put(screenRect, b);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +83,8 @@ public class MainActivity extends Activity {
         mCoordinateWorker = new CoordinateWorker(getZmqUrl(), mCoordinateHandler);
         mCoordinateWorkerThread = new Thread(mCoordinateWorker);
         mCoordinateWorkerThread.start();
+
+        updateButtonRects();
 
     }
 
@@ -107,6 +141,13 @@ public class MainActivity extends Activity {
                         WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 PixelFormat.TRANSLUCENT);
         mWm.updateViewLayout(mCrosshairView, lp);
+
+        updateButtonRects();
+        for (RectF key : mButtons.keySet()) {
+            if (key.contains(c.x, c.y)) {
+                mButtons.get(key).requestFocus();
+            }
+        }
     }
 
     @Override
