@@ -9,13 +9,23 @@ public class CoordinateMessage {
     public static final String HEADER_EVENT = "Event";
     public static final String KEY_X = "x";
     public static final String KEY_Y = "y";
+    public static final String KEY_PUPIL_DETECTED = "pupil_detected";
+    public static final String KEY_TIMESTAMP = "timestamp";
     public static final String KEY_TYPE = "type";
     public static final String SEPARATOR = ":";
     public static final String VALUE_TYPE = "android_coordinates";
 
-    private float mx;
-    private float my;
-    private String mType;
+    public double x;
+    public double y;
+    public boolean pupilDetected;
+    public double timestamp;
+    public String type;
+
+    public CoordinateMessage() {
+        x = y = timestamp = 0f;
+        pupilDetected = false;
+        type = "";
+    }
 
     public static CoordinateMessage fromMessage(String message) {
         String[] lines = message.split("\n");
@@ -30,42 +40,22 @@ public class CoordinateMessage {
         }
         if (!keyValues.containsKey(KEY_TYPE) ||
                 !keyValues.containsKey(KEY_X) ||
-                !keyValues.containsKey(KEY_Y))
+                !keyValues.containsKey(KEY_Y) ||
+                !keyValues.containsKey(KEY_PUPIL_DETECTED) ||
+                !keyValues.containsKey(KEY_TIMESTAMP))
             return null;
         CoordinateMessage result = new CoordinateMessage();
-        result.mType = keyValues.get(KEY_TYPE).trim();
-        if (!result.mType.equals(VALUE_TYPE))
+        result.type = keyValues.get(KEY_TYPE).trim();
+        if (!result.type.equals(VALUE_TYPE))
             return null;
         try {
-            result.mx = Float.parseFloat(keyValues.get(KEY_X));
-            result.my = Float.parseFloat(keyValues.get(KEY_Y));
+            result.x = Double.parseDouble(keyValues.get(KEY_X));
+            result.y = Double.parseDouble(keyValues.get(KEY_Y));
+            result.pupilDetected = Boolean.parseBoolean(keyValues.get(KEY_PUPIL_DETECTED));
+            result.timestamp = Double.parseDouble(keyValues.get(KEY_TIMESTAMP));
         } catch (NumberFormatException e) {
             return null;
         }
         return result;
-    }
-
-    public float getX() {
-        return mx;
-    }
-
-    public void setX(float mx) {
-        this.mx = mx;
-    }
-
-    public float getY() {
-        return my;
-    }
-
-    public void setY(float my) {
-        this.my = my;
-    }
-
-    public String getType() {
-        return mType;
-    }
-
-    public void setType(String type) {
-        this.mType = type;
     }
 }

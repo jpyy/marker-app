@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <EditTextPreference
-        android:key="pref_zeromq_url"
-        android:title="@string/pref_zeromq_url"
+        android:key="@string/pref_zeromq_url"
+        android:title="@string/pref_zeromq_url_desc"
         android:summary="%s"
         android:defaultValue="" />
+    <EditTextPreference
+        android:key="@string/pref_blinktime_min"
+        android:title="@string/pref_blinktime_min_title"
+        android:summary="%s ms"
+        android:defaultValue="1000" />
+
+    <EditTextPreference
+        android:key="@string/pref_blinktime_max"
+        android:title="@string/pref_blinktime_max_title"
+        android:summary="%s ms"
+        android:defaultValue="3000" />
 
 </PreferenceScreen>

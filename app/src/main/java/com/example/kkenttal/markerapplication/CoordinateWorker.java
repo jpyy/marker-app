@@ -1,6 +1,5 @@
 package com.example.kkenttal.markerapplication;
 
-import android.graphics.PointF;
 import android.os.Handler;
 import android.util.Log;
 
@@ -15,12 +14,12 @@ import java.util.concurrent.atomic.AtomicReference;
 public class CoordinateWorker implements Runnable {
     private static final String LOG_TAG = CoordinateWorker.class.getSimpleName();
     volatile boolean mQuit = false;
-    AtomicReference<PointF> mNormalizedCoordinates;
+    AtomicReference<CoordinateMessage> mNormalizedCoordinates;
     String mUrl;
     Handler mParent;
 
     public CoordinateWorker(String url, Handler parent) {
-        mNormalizedCoordinates = new AtomicReference<PointF>(new PointF(0, 0));
+        mNormalizedCoordinates = new AtomicReference<CoordinateMessage>(new CoordinateMessage());
         mUrl = url;
         mParent = parent;
     }
@@ -47,8 +46,8 @@ public class CoordinateWorker implements Runnable {
             if (message != null) {
                 CoordinateMessage cm = CoordinateMessage.fromMessage(message);
                 if (cm != null) {
-                    PointF coords = new PointF(cm.getX(), cm.getY());
-                    mNormalizedCoordinates.set(coords);
+                    //PointF coords = new PointF(cm.getX(), cm.getY());
+                    mNormalizedCoordinates.set(cm);
                     mParent.sendEmptyMessage(0);
                 }
             } else {
@@ -61,7 +60,7 @@ public class CoordinateWorker implements Runnable {
         Log.v(LOG_TAG, "Worked stopped.");
     }
 
-    public PointF getNormalizedCoordinates() {
+    public CoordinateMessage getNormalizedCoordinates() {
         return mNormalizedCoordinates.get();
     }
 

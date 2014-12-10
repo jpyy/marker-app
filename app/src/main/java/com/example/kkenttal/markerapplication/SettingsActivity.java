@@ -93,7 +93,10 @@ public class SettingsActivity extends PreferenceActivity {
         // Bind the summaries of EditText/List/Dialog/Ringtone preferences to
         // their values. When their values change, their summaries are updated
         // to reflect the new value, per the Android Design guidelines.
-        bindPreferenceSummaryToValue(findPreference("pref_zeromq_url"));
+        bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_zeromq_url)));
+        bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_blinktime_min)));
+        bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_blinktime_max)));
+
     }
 
     /**
@@ -131,9 +134,9 @@ public class SettingsActivity extends PreferenceActivity {
      * to reflect its new value.
      */
     private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object value) {
-            String stringValue = value.toString();
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object value) {
+                    String stringValue = value.toString();
 
             if (preference instanceof ListPreference) {
                 // For list preferences, look up the correct display value in

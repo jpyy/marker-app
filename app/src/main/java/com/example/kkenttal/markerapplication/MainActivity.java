@@ -3,12 +3,12 @@ package com.example.kkenttal.markerapplication;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
-import android.graphics.PointF;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,6 +23,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.HashMap;
 
@@ -34,6 +35,10 @@ public class MainActivity extends Activity {
     Thread mCoordinateWorkerThread;
     CoordinateWorker mCoordinateWorker;
     Handler mCoordinateHandler;
+    Double mBlinkTimestamp;
+    Double mMinBlinkTime;
+    Double mMaxBlinkTime;
+
     TextView mCoordView;
     View mCrosshairView;
     private WindowManager mWm;
@@ -70,6 +75,33 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.grid);
+
+        findViewById(R.id.button1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "Button 1", Toast.LENGTH_SHORT).show();
+            }
+        });
+        findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "Button 2", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        try {
+            mMinBlinkTime = Double.parseDouble(sp.getString(getString(R.string.pref_blinktime_min), "1000"))
+                    / 1000.0;
+        } catch (NumberFormatException e) {
+            mMinBlinkTime = 1.0;
+        }
+        try {
+            mMaxBlinkTime = Double.parseDouble(sp.getString(getString(R.string.pref_blinktime_max), "3000"))
+                    / 1000.0;
+        } catch (NumberFormatException e) {
+            mMaxBlinkTime = 5.0;
+        }
         mCrosshairView = createOverlayView();
         //doBindService();
         mCoordView = (TextView)findViewById(R.id.coord_textview);
@@ -83,6 +115,7 @@ public class MainActivity extends Activity {
         mCoordinateWorker = new CoordinateWorker(getZmqUrl(), mCoordinateHandler);
         mCoordinateWorkerThread = new Thread(mCoordinateWorker);
         mCoordinateWorkerThread.start();
+        mBlinkTimestamp = null;
 
         updateButtonRects();
 
@@ -120,33 +153,47 @@ public class MainActivity extends Activity {
     }
 
     private void onCoordinatesUpdated() {
-        PointF c = mCoordinateWorker.getNormalizedCoordinates();
-        mCoordView.setText("x: " + c.x + " y: " + c.y);
-        //mCrosshairView.setX(c.x * 10);
-        //mCrosshairView.setY(c.y * 10);
-        DisplayMetrics dm = new DisplayMetrics();
-        mWm.getDefaultDisplay().getMetrics(dm);
-        int screenWidth = dm.widthPixels;
-        int screenHeight = dm.heightPixels;
+        CoordinateMessage c = mCoordinateWorker.getNormalizedCoordinates();
+        if (c.pupilDetected) {
+            if (mBlinkTimestamp != null) {
+                double dtBlink = c.timestamp - mBlinkTimestamp;
+                if ( dtBlink >= mMinBlinkTime && dtBlink <= mMaxBlinkTime) {
 
-
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                (int)((c.x - 0.5) * screenWidth),
-                (int)((c.y - 0.5) * screenHeight),
-                WindowManager.LayoutParams.TYPE_APPLICATION,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE |
-                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
-                        WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                PixelFormat.TRANSLUCENT);
-        mWm.updateViewLayout(mCrosshairView, lp);
-
-        updateButtonRects();
-        for (RectF key : mButtons.keySet()) {
-            if (key.contains(c.x, c.y)) {
-                mButtons.get(key).requestFocus();
+                    getCurrentFocus().performClick();
+                }
+                mBlinkTimestamp = null;
             }
+            mCoordView.setText("x: " + c.x + " y: " + c.y);
+            //mCrosshairView.setX(c.x * 10);
+            //mCrosshairView.setY(c.y * 10);
+            DisplayMetrics dm = new DisplayMetrics();
+            mWm.getDefaultDisplay().getMetrics(dm);
+            int screenWidth = dm.widthPixels;
+            int screenHeight = dm.heightPixels;
+
+
+            WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    (int) ((c.x - 0.5) * screenWidth),
+                    (int) ((c.y - 0.5) * screenHeight),
+                    WindowManager.LayoutParams.TYPE_APPLICATION,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE |
+                            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
+                            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                    PixelFormat.TRANSLUCENT);
+            mWm.updateViewLayout(mCrosshairView, lp);
+
+            updateButtonRects();
+            for (RectF key : mButtons.keySet()) {
+                if (key.contains((float)c.x, (float)c.y)) {
+                    mButtons.get(key).requestFocus();
+                }
+            }
+        } else {
+            mCoordView.setText("no pupil");
+            if (mBlinkTimestamp == null)
+                mBlinkTimestamp = c.timestamp;
         }
     }
 
