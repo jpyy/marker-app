@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.RectF;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -23,7 +24,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.HashMap;
 
@@ -39,11 +39,18 @@ public class MainActivity extends Activity {
     Double mMinBlinkTime;
     Double mMaxBlinkTime;
 
+    final String phoneUriPrefix = "tel:";
+    String mPhoneNumber;
+
     TextView mCoordView;
     View mCrosshairView;
     private WindowManager mWm;
 
-    private static final int[] BUTTON_RESOURCES = {R.id.button1, R.id.button2};
+    private static final int[] BUTTON_RESOURCES = {
+            R.id.button1, R.id.button2, R.id.button3, 
+            R.id.button4, R.id.button5, R.id.button6,
+            R.id.button7, R.id.button8, R.id.button9,
+            R.id.button0, R.id.button_call, R.id.button_clear};
     private HashMap<RectF, Button> mButtons;
 
     private void updateButtonRects() {
@@ -71,23 +78,32 @@ public class MainActivity extends Activity {
         }
     }
 
+    private void bindNumberButton(int id, final char number) {
+        View v = findViewById(id);
+        v.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPhoneNumber += number;
+                mCoordView.setText(mPhoneNumber);
+            }
+        });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.grid);
-
-        findViewById(R.id.button1).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Button 1", Toast.LENGTH_SHORT).show();
-            }
-        });
-        findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Button 2", Toast.LENGTH_SHORT).show();
-            }
-        });
+        mPhoneNumber = "";
+        bindNumberButton(R.id.button0, '0');
+        bindNumberButton(R.id.button1, '1');
+        bindNumberButton(R.id.button2, '2');
+        bindNumberButton(R.id.button3, '3');
+        bindNumberButton(R.id.button4, '4');
+        bindNumberButton(R.id.button5, '5');
+        bindNumberButton(R.id.button6, '6');
+        bindNumberButton(R.id.button7, '7');
+        bindNumberButton(R.id.button8, '8');
+        bindNumberButton(R.id.button9, '9');
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         try {
@@ -105,6 +121,27 @@ public class MainActivity extends Activity {
         mCrosshairView = createOverlayView();
         //doBindService();
         mCoordView = (TextView)findViewById(R.id.coord_textview);
+        mCoordView.setText(mPhoneNumber);
+        findViewById(R.id.button_call).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mPhoneNumber.length() > 0) {
+                    startActivity(new Intent(Intent.ACTION_CALL)
+                            .setData(Uri.parse(phoneUriPrefix + mPhoneNumber)));
+                    mPhoneNumber = "";
+                    mCoordView.setText(mPhoneNumber);
+
+                }
+            }
+        });
+
+        findViewById(R.id.button_clear).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPhoneNumber = "";
+                mCoordView.setText(mPhoneNumber);
+            }
+        });
         mCoordinateHandler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
@@ -163,7 +200,7 @@ public class MainActivity extends Activity {
                 }
                 mBlinkTimestamp = null;
             }
-            mCoordView.setText("x: " + c.x + " y: " + c.y);
+            //mCoordView.setText("x: " + c.x + " y: " + c.y);
             //mCrosshairView.setX(c.x * 10);
             //mCrosshairView.setY(c.y * 10);
             DisplayMetrics dm = new DisplayMetrics();
@@ -191,7 +228,7 @@ public class MainActivity extends Activity {
                 }
             }
         } else {
-            mCoordView.setText("no pupil");
+            //mCoordView.setText("no pupil");
             if (mBlinkTimestamp == null)
                 mBlinkTimestamp = c.timestamp;
         }

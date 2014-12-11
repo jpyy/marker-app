@@ -27,13 +27,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:id="@+id/coord_textview"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:padding="16dp" />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
 
         <ImageView
             android:layout_width="0dp"
@@ -51,28 +46,33 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <Space
+        <Button
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:text="CALL"
+            android:background="#ff00ff00"
+            android:id="@+id/button_call"
             android:layout_weight="1" />
 
         <Button
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:text="Button 1"
+            android:text="1"
             android:id="@+id/button1"
             android:layout_weight="1" />
 
         <Button
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:text="Button 2"
+            android:text="2"
             android:id="@+id/button2"
             android:layout_weight="1" />
 
-        <Space
+        <Button
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:text="3"
+            android:id="@+id/button3"
             android:layout_weight="1" />
     </LinearLayout>
 
@@ -80,13 +80,67 @@
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"></LinearLayout>
+        android:layout_weight="1">
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="4"
+            android:id="@+id/button4"
+            android:layout_weight="1" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="5"
+            android:id="@+id/button5"
+            android:layout_weight="1" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="6"
+            android:id="@+id/button6"
+            android:layout_weight="1" />
+        </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"></LinearLayout>
+        android:layout_weight="1">
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="CLEAR"
+            android:id="@+id/button_clear"
+            android:layout_weight="1" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="7"
+            android:id="@+id/button7"
+            android:layout_weight="1" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="8"
+            android:id="@+id/button8"
+            android:layout_weight="1" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="9"
+            android:id="@+id/button9"
+            android:layout_weight="1" />
+        </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
@@ -107,7 +161,14 @@
         <Space
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2" />
+            android:layout_weight="1" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="0"
+            android:id="@+id/button0"
+            android:layout_weight="1" />
 
         <ImageView
             android:layout_width="0dp"
