@@ -66,6 +66,10 @@ class AndroidPlugin(Plugin):
                     x, y = p["realtime gaze on phone"]
                     y = 1 - y
                     pupil_detected = p["norm_pupil"] is not None
+                elif p["norm_pupil"] is None:
+                    x = 0.0
+                    y = 0.0
+                    pupil_detected = False
         else:
             if self.should_blink:
                 self.should_blink = False
